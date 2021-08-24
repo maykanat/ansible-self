@@ -1,0 +1,16 @@
+---
+- name: Example Playbook
+  hosts: ubuntu
+  user: ubuntu
+  become: true
+  become_method: sudo
+  tasks:
+    - name: Install multiple packages
+      ansible.builtin.package:
+        name:  # we create a loop here
+          - apache2
+          - telnet
+          - unzip
+        state: absent
+...
+
