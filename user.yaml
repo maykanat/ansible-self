@@ -1,15 +1,15 @@
----
+--- #ansible-playbook -i /tmp/inventory user.yaml 
 - name: User Playbook
-  hosts: amazon
+  hosts: all
   become: true
   become_method: sudo
 
 
   tasks:
-    - name: Add the user 'johnd' with a specific uid and a primary group of 'admin'
+    - name: Add the user 'johnd' 
       ansible.builtin.user:
         name: johnd
         comment: John Doe
-        group: wheel
+        
 ...
 
