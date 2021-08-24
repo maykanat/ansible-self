@@ -1,0 +1,34 @@
+---
+  - name: Conditional Playbook 2
+    hosts: all
+    become: true
+    become_method: sudo
+
+    tasks:
+    - name: Install Package
+      package: 
+       name: telnet
+       state: present
+    
+    
+    - name: Information
+      ansible.builtin.debug: 
+        var: ansible_facts ['distribution']
+
+    - name: Install Webserver # webserver for CentOS
+      when: ansible_facts ['distribution'] == "Amazon"
+      ansible.builtin.package: 
+        name: httpd
+        state: present
+
+    - name: Install Webserver # webserver for Ubuntu
+       when: ansible_facts ['distribution'] == "Ubuntu"
+        ansible.builtin.package: 
+          name: apache2
+          state: present
+
+           
+        
+
+      
+        

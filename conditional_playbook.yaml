@@ -8,4 +8,13 @@
     - name: Install Package
       package: 
        name: telnet
-       state: present     
+       state: present
+    
+    
+    - name: Information
+      ansible.builtin.debug: 
+        var: ansible_facts ['distribution']   
+        
+
+      
+        
