@@ -22,10 +22,10 @@
         state: present
 
     - name: Install Webserver # webserver for Ubuntu
-       when: ansible_facts ['distribution'] == "Ubuntu"
-        ansible.builtin.package: 
-          name: apache2
-          state: present
+      when: ansible_facts ['distribution'] == "Ubuntu"
+      ansible.builtin.package: 
+        name: apache2
+        state: present
 
            
         

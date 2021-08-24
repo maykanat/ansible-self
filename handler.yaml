@@ -1,0 +1,48 @@
+--- 
+- name: Conditional Playbook
+  hosts: all
+  become: true
+  become_method: sudo
+  tasks: 
+  - name: Information
+    ansible.builtin.debug:
+      var: ansible_facts['distribution_version']
+
+  - name: Install webserver Amazon
+    when: 
+    - ansible_facts['distribution'] == "Amazon"  
+    - ansible_facts['distribution_version'] == "2"
+    ansible.builtin.package:
+      name: httpd
+      state: present
+    notify: Restart webserver Amazon
+
+
+  - name: Install webserver Ubuntu
+    when: 
+    - ansible_facts['distribution'] == "Ubuntu" 
+    - ansible_facts['distribution_version'] == "16.04"
+    ansible.builtin.package:
+      name: apache2
+      state: present
+    notify: Restart webserver Ubuntu
+
+
+
+  handlers:
+  - name: Restart webserver Amazon
+    when: 
+    - ansible_facts['distribution'] == "Amazon"
+    - ansible_facts['distribution_version'] == "2"
+    systemd:
+      name: httpd
+      state: restarted
+
+
+  - name: Restart webserver Ubuntu
+    when: 
+    - ansible_facts['distribution'] == "Ubuntu"
+    - ansible_facts['distribution_version'] == "16.04"
+    systemd:
+      name: apache2
+      state: restarted
