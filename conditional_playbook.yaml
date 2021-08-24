@@ -1,0 +1,11 @@
+---
+  - name: Conditional Playbook 
+    hosts: all
+    become: true
+    become_method: sudo
+
+    tasks:
+    - name: Install Package
+      package: 
+       name: telnet
+       state: present     
