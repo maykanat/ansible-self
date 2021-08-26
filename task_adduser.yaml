@@ -22,6 +22,8 @@
         - Katty
   
     - name: Download a csv file
+      when:
+        - 'ansible_facts[''distribution''] == "Amazon"'
       ignore_errors: true
       ansible.builtin.get_url:
         url: 'https://people.sc.fsu.edu/~jburkardt/data/csv/addresses.csv'
@@ -29,6 +31,8 @@
         mode: '777'
 
     - name: Copy file with owner and permissions
+      when:
+        - 'ansible_facts[''distribution''] == "Amazon"'
       ansible.builtin.copy:
         src: /home/addresses.csv
         dest: /home/{{ item }}
