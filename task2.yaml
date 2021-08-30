@@ -1,0 +1,98 @@
+--- 
+- name:  Playbook Task2
+  hosts: all
+  become: true
+  become_method: sudo
+
+  vars:
+    wordpress_version: "4.0.32"
+    php_version: "5.4.16"
+
+  tasks:
+    - name: Information
+      ansible.builtin.debug:
+        var: 'ansible_facts[''distribution_version'']'
+
+    - name: Install Wordpress Prerequisites
+      when:
+      - ansible_facts['distribution']== "Amazon"
+      - ansible_facts['distribution_version']== "2"
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - httpd
+        - php-{{ php_version }}
+        - php-mysql-{{ php_version }} 
+        - telnet
+      notify: Start Webserver
+
+    - name: Start Webserver
+      when: 
+      - ansible_facts['distribution'] == "Amazon"
+      - ansible_facts['distribution_version'] == "2"
+      systemd: 
+        name: "{{ item }}" 
+        state: restarted
+        enabled: true
+      with_items:
+      - httpd
+      - crond
+
+    - name: Get Wordpress
+      when: 
+      - ansible_facts['distribution'] == "Amazon"
+      - ansible_facts['distribution_version'] == "2"
+      get_url:
+        url: https://wordpress.org/wordpress-{{ wordpress_version }}.tar.gz
+        dest: /tmp/wordpress-{{ wordpress_version }}.tar.gz
+        mode: '0440'
+
+    - name: Unzip Wordpress
+      when: 
+      - ansible_facts['distribution'] == "Amazon"
+      - ansible_facts['distribution_version'] == "2"
+      unarchive:
+        src: /tmp/wordpress-{{ wordpress_version }}.tar.gz
+        dest: /var/www/html/
+        remote_src: true
+
+    - name: Move wordpress
+      when: 
+      - ansible_facts['distribution'] == "Amazon"
+      - ansible_facts['distribution_version'] == "2"
+      shell: "cp -r  /var/www/html/wordpress/*   /var/www/html || exit 0"
+      ignore_errors: true 
+
+    - name: Ensure group "Devops" exists
+      when:
+        - 'ansible_facts[''distribution''] == "Ubuntu"'
+      ansible.builtin.group:
+        name: devops
+        state: present
+
+    - name: Add  users to Ubuntu
+      when:
+        - 'ansible_facts[''distribution''] == "Ubuntu"'
+      ansible.builtin.user:
+        name: '{{ item }}'
+        groups: devops,admin
+        generate_ssh_key: 'yes'
+        ssh_key_file: .ssh/id_rsa
+      with_items:
+        - User1
+        - User2
+        - User3
+        - User4
+        - User5
+
+    - name: Install Telnet
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+      - telnet
+ 
+              
+
+
