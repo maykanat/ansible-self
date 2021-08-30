@@ -1,4 +1,13 @@
 --- 
+
+# Please create an ansible role that installs wordpress
+# on Operating systems. The same role should
+# add 5 users with ssh keys generated on ubuntu machines, 
+#and add those users to a devops group. 
+#Those users should have root privileges. 
+#For testing purposes this role should 
+#install telnet for future use. 
+
 - name:  Playbook Task2
   hosts: all
   become: true
